@@ -14,3 +14,20 @@ fn insert_node(head: &mut Option<Box<Node>>, data: i32) -> &Node {
     }
     current.insert(Box::new(create_node(data)))
 }
+
+fn remove_node(head: &mut Option<Box<Node>>, data: i32) -> bool {
+    let mut current = head;
+
+    loop {
+        match current {
+            Some(node) if node.data == data => {
+                *current = node.next.take();
+                return true;
+            }
+            Some(node) => {
+                current = &mut node.next;
+            }
+            None => return false
+        }
+    }
+}
