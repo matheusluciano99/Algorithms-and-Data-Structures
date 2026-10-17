@@ -1,33 +1,46 @@
+struct LinkedList{
+    head: Option<Box<Node>>
+}
+
+trait LinkedListOps {
+    fn create_node(data: i32) -> Node;
+    fn insert_node(&mut self, data: i32) -> &Node;
+    fn remove_node(&mut self, data: i32) -> bool;
+}
+
 struct Node {
     data: i32,
     next: Option<Box<Node>>,
 }
 
-fn create_node(data: i32) -> Node {
-    Node { data, next: None }
-}
-
-fn insert_node(head: &mut Option<Box<Node>>, data: i32) -> &Node {
-    let mut current = head;
-    while let Some(node) = current {
-        current = &mut node.next;
+impl LinkedListOps for LinkedList {
+    fn create_node(data: i32) -> Node {
+        Node { data, next: None }
     }
-    current.insert(Box::new(create_node(data)))
-}
 
-fn remove_node(head: &mut Option<Box<Node>>, data: i32) -> bool {
-    let mut current = head;
+    fn insert_node(&mut self, data: i32) -> &Node {
+        let mut current = &mut self.head;
+        while let Some(node) = current {
+            current = &mut node.next;
+        }
+        current.insert(Box::new(Self::create_node(data)))
+    }
 
-    loop {
-        match current {
-            Some(node) if node.data == data => {
-                *current = node.next.take();
-                return true;
+    fn remove_node(&mut self, data: i32) -> bool {
+        let mut current = &mut self.head;
+
+        loop {
+            match current {
+                Some(node) if node.data == data => {
+                    *current = node.next.take();
+                    return true;
+                }
+                Some(node) => {
+                    current = &mut node.next;
+                }
+                None => return false
             }
-            Some(node) => {
-                current = &mut node.next;
-            }
-            None => return false
         }
     }
+
 }
